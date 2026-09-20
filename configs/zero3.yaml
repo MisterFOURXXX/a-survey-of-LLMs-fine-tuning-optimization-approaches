@@ -1,0 +1,27 @@
+method: zero3
+model_name: "google/gemma-3-1b-it"
+
+data:
+  max_samples: 200
+  max_length: 128
+
+training:
+  output_dir: "./outputs"
+  num_train_epochs: 3
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 4
+  learning_rate: 2e-5
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+
+zero3:
+  zero_stage: 3
+  offload_optimizer: true
+  offload_param: true
+  pin_memory: true
+  overlap_comm: true
+  contiguous_gradients: true
+  gradient_clipping: 1.0
+  fp16_enabled: false
+  steps_per_print: 50

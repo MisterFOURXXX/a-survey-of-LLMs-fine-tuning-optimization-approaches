@@ -1,0 +1,22 @@
+method: prompt_tuning
+model_name: "google/gemma-3-270m"
+
+data:
+  max_samples: 200
+  max_length: 128
+
+training:
+  output_dir: "./outputs"
+  num_train_epochs: 3
+  per_device_train_batch_size: 8
+  per_device_eval_batch_size: 8
+  gradient_accumulation_steps: 1
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+
+prompt_tuning:
+  num_virtual_tokens: 20
+  prompt_tuning_init: "TEXT"
+  prompt_tuning_init_text: "Question: Answer:"
+  learning_rate: 2e-4
+  optim: "adamw_torch"
