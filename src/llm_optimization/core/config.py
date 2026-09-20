@@ -1,13 +1,10 @@
-"""Configuration dataclasses and YAML loader for all optimization methods.
-
-Every config is a frozen dataclass — never mutate after construction.
-"""
+"""Configuration dataclasses and YAML loader for all optimization methods."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 import yaml
 
@@ -15,6 +12,27 @@ from .exceptions import ConfigError
 from .types import PrecisionMode, TrainingMethod
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# Helper: coerce YAML-parsed values into the expected Python types.
+# ═══════════════════════════════════════════════════════════════════════════
+def _coerce_floats(data: dict[str, Any], keys: set[str]) -> dict[str, Any]:
+    """Convert string values that look numeric back into floats.
+
+    YAML 1.1 requires a decimal point for scientific notation (e.g. `2.0e-4`);
+    a bare `2e-4` is parsed as a string. This helper repairs that at load time.
+    """
+    for k, v in list(data.items()):
+        if k in keys and isinstance(v, str):
+            try:
+                data[k] = float(v)
+            except ValueError:
+                pass  # leave as-is; dataclass __init__ will raise a clear error
+    return data
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Config dataclasses (unchanged from spec — abbreviated for clarity)
+# ═══════════════════════════════════════════════════════════════════════════
 @dataclass(frozen=True)
 class DataConfig:
     dataset_path: str = "data"
@@ -168,7 +186,27 @@ class PipelineConfig:
         return Path(self.training.output_dir) / self.method.value
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# LOADER (patched to coerce string floats)
+# ═══════════════════════════════════════════════════════════════════════════
+# Fields that must be floats even if YAML parsed them as strings.
+_FLOAT_FIELDS = {
+    "learning_rate", "weight_decay", "warmup_ratio", "max_grad_norm",
+    "temperature", "alpha", "attention_beta", "logit_temperature",
+    "lora_dropout", "gpu_memory_utilization", "eps",
+    "reduce_bucket_size", "stage3_prefetch_bucket_size",
+    "stage3_param_persistence_threshold", "stage3_max_live_parameters",
+    "gradient_clipping", "test_size", "val_size",
+}
+
+
 def load_config(path: str | Path) -> PipelineConfig:
+    """Load a PipelineConfig from a YAML file.
+
+    Handles the YAML 1.1 scientific-notation trap where `2e-4` is parsed
+    as a string instead of a float. Any string that looks like a float in
+    a known float field is coerced back to float.
+    """
     path = Path(path)
     if not path.exists():
         raise ConfigError(f"Config file not found: {path}")
@@ -187,19 +225,20 @@ def load_config(path: str | Path) -> PipelineConfig:
             f"Valid options: {[m.value for m in TrainingMethod]}"
         )
 
-    data = DataConfig(**raw.pop("data", {}))
-    training = TrainingConfig(**raw.pop("training", {}))
+    # ── Coerce nested dicts before constructing dataclasses ──
+    data = DataConfig(**_coerce_floats(raw.pop("data", {}) or {}, _FLOAT_FIELDS))
+    training = TrainingConfig(**_coerce_floats(raw.pop("training", {}) or {}, _FLOAT_FIELDS))
 
     mixed_precision = None
     if "mixed_precision" in raw:
-        mp = dict(raw.pop("mixed_precision"))
+        mp = _coerce_floats(dict(raw.pop("mixed_precision")), _FLOAT_FIELDS)
         if "precision" in mp:
             mp["precision"] = PrecisionMode(mp["precision"])
         mixed_precision = MixedPrecisionConfig(**mp)
 
     qlora = None
     if "qlora" in raw:
-        ql = dict(raw.pop("qlora"))
+        ql = _coerce_floats(dict(raw.pop("qlora")), _FLOAT_FIELDS)
         if "bnb_4bit_compute_dtype" in ql:
             ql["bnb_4bit_compute_dtype"] = PrecisionMode(ql["bnb_4bit_compute_dtype"])
         if "lora_target_modules" in ql:
@@ -208,30 +247,38 @@ def load_config(path: str | Path) -> PipelineConfig:
 
     gradient_checkpointing = None
     if "gradient_checkpointing" in raw:
-        gradient_checkpointing = GradientCheckpointingConfig(**raw.pop("gradient_checkpointing"))
+        gradient_checkpointing = GradientCheckpointingConfig(
+            **_coerce_floats(dict(raw.pop("gradient_checkpointing")), _FLOAT_FIELDS)
+        )
 
     zero3 = None
     if "zero3" in raw:
-        zero3 = ZeRO3Config(**raw.pop("zero3"))
+        zero3 = ZeRO3Config(**_coerce_floats(dict(raw.pop("zero3")), _FLOAT_FIELDS))
 
     prompt_tuning = None
     if "prompt_tuning" in raw:
-        prompt_tuning = PromptTuningConfig(**raw.pop("prompt_tuning"))
+        prompt_tuning = PromptTuningConfig(
+            **_coerce_floats(dict(raw.pop("prompt_tuning")), _FLOAT_FIELDS)
+        )
 
     distillation = None
     if "distillation" in raw:
-        distillation = DistillationConfig(**raw.pop("distillation"))
+        distillation = DistillationConfig(
+            **_coerce_floats(dict(raw.pop("distillation")), _FLOAT_FIELDS)
+        )
 
     optimizer = None
     if "optimizer" in raw:
-        opt = dict(raw.pop("optimizer"))
+        opt = _coerce_floats(dict(raw.pop("optimizer")), _FLOAT_FIELDS)
         if "betas" in opt:
             opt["betas"] = tuple(opt["betas"])
         optimizer = OptimizerConfig(**opt)
 
     inference = None
     if "inference" in raw:
-        inference = InferenceConfig(**raw.pop("inference"))
+        inference = InferenceConfig(
+            **_coerce_floats(dict(raw.pop("inference")), _FLOAT_FIELDS)
+        )
 
     return PipelineConfig(
         method=method,

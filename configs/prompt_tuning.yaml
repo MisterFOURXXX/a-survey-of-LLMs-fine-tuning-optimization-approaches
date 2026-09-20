@@ -18,5 +18,5 @@ prompt_tuning:
   num_virtual_tokens: 20
   prompt_tuning_init: "TEXT"
   prompt_tuning_init_text: "Question: Answer:"
-  learning_rate: 2e-4
+  learning_rate: 2.0e-4
   optim: "adamw_torch"

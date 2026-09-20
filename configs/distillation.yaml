@@ -1,0 +1,31 @@
+method: knowledge_distillation
+model_name: "google/gemma-3-270m"
+
+data:
+  max_samples: 200
+  max_length: 128
+  min_score: 5
+
+training:
+  output_dir: "./outputs"
+  num_train_epochs: 3
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 4
+  learning_rate: 1.0e-4
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  lr_scheduler_type: "cosine"
+  logging_steps: 50
+  eval_strategy: "epoch"
+  save_strategy: "epoch"
+  load_best_model_at_end: true
+  save_total_limit: 2
+
+distillation:
+  teacher_model_name: "google/gemma-3-1b-it"
+  temperature: 2.0
+  alpha: 0.5
+  use_attention_distillation: false
+  attention_beta: 0.3
+  logit_temperature: 2.0

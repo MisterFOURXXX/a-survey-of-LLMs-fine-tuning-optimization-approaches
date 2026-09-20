@@ -12,7 +12,7 @@ peft>=0.10.0,<0.14.0
 trl>=0.8.0,<0.13.0
 
 # Quantization and memory-efficient optimizers
-bitsandbytes
+bitsandbytes>=0.46.1
 
 # Distributed training (ZeRO-3 experiments)
 deepspeed>=0.14.0,<0.16.0
