@@ -62,3 +62,51 @@ class ResourceMonitor:
         print(f"  Peak GPU memory:   {peak_gpu:.0f} MB")
         print(f"  Final loss:        {self.steps[-1].loss:.4f}")
         print("=" * 60)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Module-level helpers
+# ─────────────────────────────────────────────────────────────────────────────
+def gpu_mem(unit: str = "MB") -> str:
+    """Return current GPU memory usage as a formatted string.
+
+    Args:
+        unit: "MB" or "GB".
+
+    Returns:
+        e.g. "1245 MB" or "1.22 GB". Returns "N/A (CPU)" if no GPU.
+    """
+    try:
+        import torch
+        if torch.cuda.is_available():
+            used = torch.cuda.memory_allocated() / (1024 ** 2)
+            if unit == "GB":
+                return f"{used / 1024:.2f} GB"
+            return f"{used:.0f} MB"
+    except ImportError:
+        pass
+    return "N/A (CPU)"
+
+
+def peak_gpu_mem(unit: str = "MB") -> str:
+    """Return peak GPU memory allocated since the last reset."""
+    try:
+        import torch
+        if torch.cuda.is_available():
+            peak = torch.cuda.max_memory_allocated() / (1024 ** 2)
+            if unit == "GB":
+                return f"{peak / 1024:.2f} GB"
+            return f"{peak:.0f} MB"
+    except ImportError:
+        pass
+    return "N/A (CPU)"
+
+
+def reset_peak_gpu_mem() -> None:
+    """Reset the CUDA peak-memory counter (no-op on CPU)."""
+    try:
+        import torch
+        if torch.cuda.is_available():
+            torch.cuda.reset_peak_memory_stats()
+    except ImportError:
+        pass

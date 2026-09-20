@@ -12,7 +12,6 @@ training:
   per_device_eval_batch_size: 8
   gradient_accumulation_steps: 1
   weight_decay: 0.01
-  warmup_ratio: 0.1
 
 prompt_tuning:
   num_virtual_tokens: 20

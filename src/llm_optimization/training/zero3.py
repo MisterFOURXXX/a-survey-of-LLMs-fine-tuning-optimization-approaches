@@ -76,7 +76,6 @@ def build_zero3_trainer(config, train_dataset, eval_dataset, tokenizer):
         gradient_accumulation_steps=tc.gradient_accumulation_steps,
         learning_rate=tc.learning_rate,
         weight_decay=tc.weight_decay,
-        warmup_ratio=tc.warmup_ratio,
         lr_scheduler_type=tc.lr_scheduler_type,
         eval_strategy=tc.eval_strategy,
         save_strategy=tc.save_strategy,
