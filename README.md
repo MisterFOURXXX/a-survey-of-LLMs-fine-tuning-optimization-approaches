@@ -1,11 +1,15 @@
 # A Survey of LLM Fine-Tuning Optimization Approaches
 
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.1%2B-orange)](https://pytorch.org/)
-[![Transformers](https://img.shields.io/badge/transformers-4.40%2B-yellow)](https://huggingface.co/docs/transformers)
-[![PEFT](https://img.shields.io/badge/peft-0.10%2B-green)](https://huggingface.co/docs/peft)
-[![vLLM](https://img.shields.io/badge/vLLM-0.6%2B-purple)](https://docs.vllm.ai/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
+> A reproducible research workbench for studying, applying, and comparing **fine-tuning optimization methods** for modern Large Language Models (LLMs). It implements seven strategies end-to-end — **QLoRA, Mixed Precision, Gradient Checkpointing, 8-bit Optimizers, Knowledge Distillation, Prompt Tuning, and ZeRO-3** — each driven by YAML configuration and evaluated on a shared benchmark using ROUGE, BLEU, latency, throughput, and VRAM metrics.
+
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/pytorch-2.10%2B-ee4c2c.svg)](https://pytorch.org/)
+[![Transformers](https://img.shields.io/badge/transformers-4.57-yellow.svg)](https://huggingface.co/docs/transformers)
+[![PEFT](https://img.shields.io/badge/peft-0.19-orange.svg)](https://huggingface.co/docs/peft)
+[![bitsandbytes](https://img.shields.io/badge/bitsandbytes-%3E%3D0.48-8a2be2.svg)](https://github.com/TimDettmers/bitsandbytes)
+[![DeepSpeed](https://img.shields.io/badge/DeepSpeed-ZeRO--3-0078D4.svg)](https://www.deepspeed.ai/)
+[![vLLM](https://img.shields.io/badge/vLLM-inference-4B8BBE.svg)](https://docs.vllm.ai/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
