@@ -59,6 +59,8 @@ Every method produces a comparable artifact in `outputs/<method>/`, and `noteboo
 - [6. Evaluation](#6-evaluation)
   - [6.1 Evaluation Metrics](#61-evaluation-metrics)
   - [6.2 Results and Metrics](#62-results-and-metrics)
+  - [6.3 Configuration Reference](#63-configuration-reference)
+  - [6.4 Technical Reference](#64-technical-reference)
 - [7. Repository Structure](#7-repository-structure)
 - [8. Getting Started](#8-getting-started)
   - [8.1 Prerequisites](#81-prerequisites)
@@ -66,8 +68,6 @@ Every method produces a comparable artifact in `outputs/<method>/`, and `noteboo
   - [8.3 Environment Installation](#83-environment-installation)
   - [8.4 Data Preparation](#84-data-preparation)
   - [8.5 Running Experiments](#85-running-experiments)
-  - [8.6 Configuration Reference](#86-configuration-reference)
-  - [8.7 Technical Reference](#87-technical-reference)
 - [9. Conclusion](#9-conclusion)
 - [10. References](#10-references)
 - [11. License](#11-license)
@@ -605,7 +605,7 @@ training:
 
 ### 6.4 Technical Reference
 
-The `src/llm_optimization/` package at a glance:
+**The `src/llm_optimization/` package at a glance**
 
 | Module | Public functions |
 |---|---|
@@ -946,14 +946,6 @@ The notebook:
 6. Writes `outputs/inference_comparison.{csv,json}`.
 
 Expected output is the comparison table shown in [§6.2](#62-results-and-metrics).
-
-### 8.6 Configuration Reference
-
-Every experiment is fully specified by a YAML file. See [§6.3](#63-configuration-reference) for an annotated example.
-
-### 8.7 Technical Reference
-
-The `src/llm_optimization/` package surface is documented in [§6.4](#64-technical-reference).
 
 ---
 
